@@ -1,8 +1,4 @@
-
-//TODO 
-	//Add sliders/editors for the values associated with separation, cohesion, and alignment.\
-	//add better UI
-	//trace path?
+//TODO
 	//on click boids travel towards the cursor
 
 //Gets the canvas
@@ -11,27 +7,31 @@ var canvas = document.getElementById("myCanvas");
 //instances 2d on it
 var ctx = canvas.getContext("2d");
 
-//set width
-function setWidth() {
-	canvas.width = window.innerWidth * 6 / 7;
-}
-setWidth();
+var controls = canvas.getElementsByClassName("control-container");
 
-//Get Width and height of canvas
-var cWidth = canvas.width;
-var cHeight = canvas.height;
+//set width
+function setCanvasSize() {
+	canvas.width = window.innerWidth * 6 / 7;
+	canvas.height = window.innerHeight * 4 / 5;
+	console.log(controls.length);
+}
+window.addEventListener('resize', setCanvasSize());
 
 //Sets some base values for drawing
 ctx.lineWidth = 4;
-ctx.strokeStyle = 'black'
-ctx.fillStyle = 'gray'
+ctx.strokeStyle = 'black';
+ctx.fillStyle = 'gray';
 
-//Base Velocity to keep boids moving around
+//Base Values for Sliders and Boids
 let velocity = 10;
+let cohDist = 100;
+let cohPerc = 600;
+let sepDist = 50;
+let sepPerc = 200;
+let alnPerc = 100;
 
 //boundary switch case tracker
 let boundaryCase = 0;
-
 
 //number of boids prompting
 let n = prompt("Enter number of Boids", "");
@@ -63,18 +63,6 @@ function Boid(x, y, r, dx, dy){
 }
 
 //----------BOID FUNCTIONS----------//
-Boid.prototype.draw = function(){
-	//shape drawing
-	ctx.beginPath();
-	//coordinates for point of triangle
-	ctx.moveTo(this.x, this.y);
-	ctx.lineTo(this.x + 4, this.y + 2);
-	ctx.lineTo(this.x + 4, this.y - 2);
-	ctx.closePath();
-	ctx.stroke();
-	ctx.fill();
-}
-
 Boid.prototype.move = function(){
 	//result is used as a vector containing the new velocity of the boid
 	let result = new Coord(0,0);
@@ -133,11 +121,21 @@ Boid.prototype.move = function(){
 			break;
 		//Case 1
 		case 1:
-			if(this.x > canvas.width || this.x < 0){
+			if(this.x > canvas.width){
 				this.dx *= -1;
+				this.x = canvas.width;
 			}
-			if(this.y > canvas.height || this.y < 0){
+			else if(this.x < 0){
+				this.dx *= -1;
+				this.x = 0;
+			}
+			if(this.y > canvas.height){
 				this.dy *= -1;
+				this.y = canvas.height;
+			}
+			else if(this.y < 0){
+				this.dy *= -1;
+				this.y = 0;
 			}
 			break;
 		default:
@@ -151,12 +149,11 @@ Boid.prototype.move = function(){
 
 Boid.prototype.cohesion = function(){
 	//0 - 600 | start 100
-	distance = 100;
 	let t = 0;
 	//calculates center of mass
 	let result = new Coord(0,0);
 	for(let i = 0; i < n; i++){
-		if(this.dist(array[i]) < distance){
+		if(this.dist(array[i]) < cohDist){
 			result.x += array[i].x;
 			result.y += array[i].y;
 			t++;
@@ -167,27 +164,32 @@ Boid.prototype.cohesion = function(){
 
 	//divides by 200 to get percentage to move towards (0.5% at 200)
 		//This only affects speed which they travel
-	result.x = (result.x - this.x) / 200;
-	result.y = (result.y - this.y) / 200;
+	result.x = (result.x - this.x) / cohPerc;
+	result.y = (result.y - this.y) / cohPerc;
 
 	return result;
 }
 
+
 Boid.prototype.separation = function(){
 	//0 - 50 | start 15
-	distance = 25;
 	let result = new Coord(0,0);
 	for(let i = 0; i < n; i++){
 		if(array[i].x == this.x && array[i].y == this.y && array[i].r == this.r){
 			continue;
 		}
-		else if(this.dist(array[i]) < distance){
+		else if(this.dist(array[i]) < sepDist){
 			result.x -= (array[i].x - this.x);
 			result.y -= (array[i].y - this.y);
 		}
 	}
+
+	result.x = result.x / sepPerc;
+	result.y = result.y / sepPerc;
+
 	return result;
 }
+
 
 Boid.prototype.alignment = function(){
 	//change how quickly they align
@@ -205,8 +207,8 @@ Boid.prototype.alignment = function(){
 	result.x /= n;
 	result.y /= n;
 
-	result.x = (result.x - this.dx) / 300;
-	result.y = (result.y - this.dy) / 300;
+	result.x = (result.x - this.dx) / alnPerc;
+	result.y = (result.y - this.dy) / alnPerc;
 
 	return result;
 }
@@ -250,8 +252,8 @@ Boid.prototype.speedlimit = function(){
 //----------HELPER FUNCTIONS----------//
 function makeBoids(n){
 	for(let i = 0; i < n; i++){
-		let rx = Math.floor(Math.random() * cWidth);
-		let ry = Math.floor(Math.random() * cHeight);
+		let rx = Math.floor(Math.random() * canvas.width);
+		let ry = Math.floor(Math.random() * canvas.height);
 		let dx = Math.floor(Math.random() * 10 - 5);
 		let dy = Math.floor(Math.random() * 10 - 5);
 		let rr = (dotProduct(dx, dy, 1, 0) * (Math.PI / 180)) + (Math.PI);
@@ -287,7 +289,7 @@ function dotProduct(x, y, dx, dy){
 }
 
 function step() {
-	setWidth();
+	setCanvasSize();
     animationFrame();
 	setTimeout(100);
     window.requestAnimationFrame(step);
@@ -316,33 +318,52 @@ function buttonClick(){
 	else{
 		boundaryCase = 0;
 	}
+	var elem = document.getElementById("myButton");
+
+
+
+	if(elem.innerHTML =="Wrap Around: On"){
+		elem.innerHTML = "Wrap Around: Off";
+	}
+	else if(elem.innerHTML =="Wrap Around: Off"){
+		elem.innerHTML = "Wrap Around: On";
+	}
+
+
 }
 
+//----------SLIDER FUNCTIONS----------//
 function velocitySlider(num){
-	console.log("HERE");
-	velocity = parseInt(num,10);
+	console.log("Velocity: " + num);
+	velocity = parseInt(num);
 }
 
 function separationDistance(num){
-	
+	console.log("Sep Dist: " + num);
+	sepDist = parseInt(num);
 }
 
 function separationPercent(num){
-	
+	console.log("Sep Percent: " + num);
+	sepPerc = parseInt(num);
 }
 
 function cohesionDistance(num){
-	
+	console.log("Coh Dist: " + num);
+	cohDist = parseInt(num);
 }
 
 function cohesionPercent(num){
-	
+	console.log("Coh Percent: " + num);
+	cohPerc = parseInt(num);
 }
 
 function alignmentPercent(num){
-	
+	console.log("Alignment Percent: " + num);
+	alnPerc = parseInt(num);
 }
-//----------MAIN PROGRAM----------//
+
+//----------MAIN PROGRAM START----------//
 makeBoids(n);
 getPositions();
 window.requestAnimationFrame(step);

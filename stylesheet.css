@@ -24,8 +24,17 @@ span{
 }
 
 
-.button{
+#myButton{
+
 	cursor: pointer;
+}
+
+.control-container{
+	display: flex; 
+	flex-direction: row; 
+	width: 100%; 
+	height: fit-content; 
+	justify-content: space-evenly;
 }
 
 .slider-label{
@@ -34,6 +43,8 @@ span{
 	max-width: 5%;
 	text-align: left;
 	height: fit-content;
+	padding-right: 3%;
+	padding-left: 1%;
 }
 
 .slider-container{
@@ -42,7 +53,7 @@ span{
 	justify-content: space-evenly;
 	align-items: center;
 	width: 100%;
-	height: height: fit-content;
+	height: fit-content;
 	padding: 7px;
 	
 }
@@ -50,7 +61,7 @@ span{
 .slider{
 	appearance: none;
 	width: 25%;
-	height: 15px;
+	height: 7px;
 	border-radius: 5px; 
 	background: gray;
 }
@@ -58,17 +69,17 @@ span{
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none; /* Override default look */
   appearance: none;
-  width: 25px; /* Set a specific slider handle width */
-  height: 25px; /* Slider handle height */
+  width: 17px; /* Set a specific slider handle width */
+  height: 17px; /* Slider handle height */
   border-radius: 50%; 
-  background: #04AA6D; /* Green background */
+  background: black; /* Green background */
   cursor: pointer; /* Cursor on hover */
 }
 
 .slider::-moz-range-thumb {
-  width: 25px; /* Set a specific slider handle width */
-  height: 25px; /* Slider handle height */
+  width: 17px; /* Set a specific slider handle width */
+  height: 17px; /* Slider handle height */
   border-radius: 50%; 
-  background: #04AA6D; /* Green background */
+  background: black; /* Green background */
   cursor: pointer; /* Cursor on hover */
 }
