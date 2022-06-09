@@ -9,9 +9,13 @@ var cWidth = canvas.width;
 var cHeight = canvas.height;
 
 //Sets some base values for drawing
-ctx.lineWidth = 10;
+ctx.lineWidth = 7;
 ctx.strokeStyle = 'black'
 ctx.fillStyle = 'gray'
+
+//other misc values
+let velocity = 20;
+
 
 //number of boids prompting
 let n = prompt("Enter number of Boids", "");
@@ -23,10 +27,12 @@ while(isNaN(parseInt(n))){
 const array = new Array(n);
 
 //----------BOID OBJECT----------//
-function Boid(x, y, r){
+function Boid(x, y, r, dx, dy){
 	this.x = x;
 	this.y = y;
 	this.r = r;
+	this.dx = dx;
+	this.dy = dy;
 }
 
 //----------BOID FUNCTIONS----------//
@@ -46,20 +52,20 @@ Boid.prototype.move = function(){
 	//everything will be in here
 	//update the coordinates
 	
-	
-	
+	this.x += this.dx;
+	this.y += this.dy;
 	
 	
 	//boundary checking
-	if(this.x > canvas.width){
+	if(this.x > canvas.width + 32){
 		this.x = 0;
-	}if(this.x < 0){
+	}if(this.x < -32){
 		this.x = canvas.width;
 	}
 	
-	if(this.y > canvas.height){
+	if(this.y > canvas.height + 32){
 		this.y = 0;
-	}if(this.y < 0){
+	}if(this.y < -32){
 		this.y = canvas.height;
 	}
 	
@@ -75,7 +81,7 @@ Boid.prototype.drawImageRot = function(){
     ctx.translate(this.x, this.y);
 
     //Rotate the canvas around the origin
-    ctx.rotate(this.r * Math.PI / 180);
+    ctx.rotate(this.r);
 
     //draw the image
 	ctx.beginPath();
@@ -95,13 +101,16 @@ Boid.prototype.dist = function(boid){
 	return Math.sqrt(Math.pow((boid.x - this.x),2) + Math.pow((boid.y - this.y),2));
 }
 
+
 //----------HELPER FUNCTIONS----------//
 function makeBoids(n){
 	for(let i = 0; i < n; i++){
-		let rx = Math.floor(Math.random() * (cWidth + 1) - 1);
+		let rx = Math.floor(Math.random() * cWidth);
 		let ry = Math.floor(Math.random() * cHeight);
-		let rr = Math.floor(Math.random() * 360);
-		let temp = new Boid(rx, ry, rr);
+		let dx = Math.floor(Math.random() * 10 - 5);
+		let dy = Math.floor(Math.random() * 10 - 5);
+		let rr = (dotProduct(dx, dy, 1, 0) * (Math.PI / 180)) + (Math.PI);
+		let temp = new Boid(rx, ry, rr, dx, dy);
 		array[i] = temp;
 		array[i].drawImageRot();
 	}
@@ -117,8 +126,26 @@ function animationFrame(){
 function getPositions(){
 	console.log("CANVAS SIZE: " + canvas.width + ", " + canvas.height);
 	for(let i = 0; i < array.length; i++){
-		console.log("BOID AT " + (i + 1) + ": " + array[i].x + ", " + array[i].y + ", and rotation: " + array[i].r);
+		let angle = array[i].r * 180 / Math.PI;
+		console.log("BOID AT " + (i + 1) + ": " + array[i].x + ", " + 
+			array[i].y + " | With Velocities: " + array[i].dx + ", " + array[i].dy 
+			+ " | and rotation: " + angle);
 	}
+}
+
+function magnitude(x, y){
+	return Math.sqrt( Math.pow(x, 2) + Math.pow(y, 2) );
+}
+
+function dotProduct(x, y, dx, dy){
+	angle = Math.atan2(y, x) - Math.atan2(dy, dx);
+	angle = angle * 360 / (2 * Math.PI);
+	
+	if(angle < 0){
+		angle += 360;
+	}
+	
+	return angle;
 }
 
 function step() {
@@ -130,6 +157,3 @@ function step() {
 makeBoids(n);
 getPositions();
 window.requestAnimationFrame(step);
-
-
-
