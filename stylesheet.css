@@ -1,0 +1,23 @@
+*{
+	background-color: gainsboro;
+}
+
+body{
+	display:flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	background-color: whitesmoke;
+	margin: 2%;
+	padding: 3%;
+}
+
+#myCanvas{
+	border: 2px solid black;
+	background-color: white;
+}
+
+.testclass{
+	color: blue;
+	background-color: gray;
+}
