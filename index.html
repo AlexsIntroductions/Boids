@@ -5,7 +5,23 @@
 </head>
 	<body>
 		TESTING
-		<canvas id="myCanvas" width="2000" height="1000"></canvas>
+		<canvas id="myCanvas" width="800" height="1000"></canvas>
 		<script src="script.js"></script>
+		<div style="display: flex; flex-direction: row; width: 100%; height: fit-content; justify-content: space-evenly">
+			<button type="button" class="button" onclick="buttonClick()">Click Me!</button>
+			<div style="display: flex; flex-direction: column; width: 100%;">
+				<div class="slider-container">
+					<div class="slider-label">Separation Distance:</div><input type="range" name="rangeInput" min="1" max="100" step="1" value="20" class="slider" onchange="velocitySlider(this.value);">
+					<div class="slider-label">Cohesion Distance:</div><input type="range" min="1" max="100" value="50" class="slider" id="range2">
+					<div class="slider-label">Velocity Change:</div><input type="range" min="1" max="100" value="50" class="slider" id="range3">
+				</div>
+				<div class="slider-container">
+					<div class="slider-label">Separation Percent:</div><input type="range" min="1" max="100" value="50" class="slider" id="percent1">
+					<div class="slider-label">Cohesion Percent:</div><input type="range" min="1" max="100" value="50" class="slider" id="percent2">
+					<div class="slider-label">Alignment Percent:</div><input type="range" min="1" max="100" value="50" class="slider" id="percent3">
+				</div>
+			</div>
+		</div>
 	</body>
+	<script src="script.js"></script>
 </html>
