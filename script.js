@@ -9,13 +9,16 @@ var cWidth = canvas.width;
 var cHeight = canvas.height;
 
 //Sets some base values for drawing
-ctx.lineWidth = 7;
+ctx.lineWidth = 4;
 ctx.strokeStyle = 'black'
 ctx.fillStyle = 'gray'
 
 //other misc values
 let velocity = 20;
-
+//general diagonal velocity?
+//adjustment to sizes with a single number
+//percents of separation and alignment
+//separation distance
 
 //number of boids prompting
 let n = prompt("Enter number of Boids", "");
@@ -23,8 +26,16 @@ while(isNaN(parseInt(n))){
 	n = prompt("Enter number of Boids", "");
 }
 
+n = Math.floor(n);
+
 //initialize boid array
 const array = new Array(n);
+
+//----------COORD OBJECT----------//
+function Coord(x, y){
+	this.x = x;
+	this.y = y;
+}
 
 //----------BOID OBJECT----------//
 function Boid(x, y, r, dx, dy){
@@ -39,8 +50,8 @@ function Boid(x, y, r, dx, dy){
 Boid.prototype.draw = function(){
 	ctx.beginPath();
 	ctx.moveTo(this.x, this.y);
-	ctx.lineTo(this.x + 16, this.y + 8);
-	ctx.lineTo(this.x + 16, this.y - 8);
+	ctx.lineTo(this.x + 4, this.y + 2);
+	ctx.lineTo(this.x + 4, this.y - 2);
 	//Rotate Testing
 	
 	ctx.closePath();
@@ -50,12 +61,29 @@ Boid.prototype.draw = function(){
 
 Boid.prototype.move = function(){
 	//everything will be in here
-	//update the coordinates
-	
+	//This is the chunk of the update function
+	let result = new Coord(0,0);
+	let temp = new Coord(0,0);
+
+	temp = this.cohesion();
+	result.x += temp.x;
+	result.y += temp.y;
+
+	temp = this.separation();
+	result.x += temp.x;
+	result.y += temp.y;
+
+	temp = this.alignment();
+	result.x += temp.x;
+	result.y += temp.y;
+
+	this.dx += result.x;
+	this.dy += result.y;
+
+	this.r = (dotProduct(this.dx, this.dy, 1, 0) * (Math.PI / 180)) + (Math.PI);
 	this.x += this.dx;
 	this.y += this.dy;
-	
-	
+
 	//boundary checking
 	if(this.x > canvas.width + 32){
 		this.x = 0;
@@ -71,6 +99,56 @@ Boid.prototype.move = function(){
 	
 	//draw the image
 	this.drawImageRot();
+}
+
+Boid.prototype.cohesion = function(){
+	let result = new Coord(0,0);
+	for(let i = 0; i < n; i++){
+		result.x += array[i].x;
+		result.y += array[i].y;
+	}
+	result.x /= n;
+	result.y /= n;
+
+	result.x = (result.x - this.x) / 200;
+	result.y = (result.y - this.y) / 200;
+
+	return result;
+}
+
+Boid.prototype.separation = function(){
+	distance = 10;
+	let result = new Coord(0,0);
+	for(let i = 0; i < n; i++){
+		if(array[i].x == this.x && array[i].y == this.y && array[i].r == this.r){
+			continue;
+		}
+		else if(this.dist(array[i]) < distance){
+			result.x -= (array[i].x - this.x);
+			result.y -= (array[i].y - this.y);
+		}
+	}
+	return result;
+}
+
+Boid.prototype.alignment = function(){
+	let result = new Coord(0,0);
+	for(let i = 0; i < n; i++){
+		if(array[i].x == this.x && array[i].y == this.y && array[i].r == this.r){
+			continue;
+		}
+		else{
+			result.x += array[i].dx;
+			result.y += array[i].dy;
+		}
+	}
+	result.x /= n;
+	result.y /= n;
+
+	result.x = (result.x - this.dx) / 200
+	result.y = (result.y - this.dy) / 200
+
+	return result;
 }
 
 Boid.prototype.drawImageRot = function(){
@@ -138,18 +216,12 @@ function magnitude(x, y){
 }
 
 function dotProduct(x, y, dx, dy){
-	angle = Math.atan2(y, x) - Math.atan2(dy, dx);
-	angle = angle * 360 / (2 * Math.PI);
-	
-	if(angle < 0){
-		angle += 360;
-	}
-	
-	return angle;
+	return (Math.atan2(y, x) - Math.atan2(dy, dx)) * 180 / (Math.PI);
 }
 
 function step() {
     animationFrame();
+	setTimeout(100);
     window.requestAnimationFrame(step);
 }
 
