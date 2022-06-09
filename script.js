@@ -3,24 +3,20 @@
 
 //Gets the canvas
 var canvas = document.getElementById("myCanvas");
-
 //instances 2d on it
 var ctx = canvas.getContext("2d");
 
-var controls = canvas.getElementsByClassName("control-container");
 
 //set width
 function setCanvasSize() {
 	canvas.width = window.innerWidth * 6 / 7;
 	canvas.height = window.innerHeight * 4 / 5;
-	console.log(controls.length);
 }
 window.addEventListener('resize', setCanvasSize());
 
 //Sets some base values for drawing
 ctx.lineWidth = 4;
 ctx.strokeStyle = 'black';
-ctx.fillStyle = 'gray';
 
 //Base Values for Sliders and Boids
 let velocity = 10;
@@ -82,7 +78,6 @@ Boid.prototype.move = function(){
 	temp = this.alignment();
 	result.x += temp.x;
 	result.y += temp.y;
-	
 	
 	//console.log(result.x + ", " + result.y);
 
@@ -148,7 +143,7 @@ Boid.prototype.move = function(){
 }
 
 Boid.prototype.cohesion = function(){
-	//0 - 600 | start 100
+	//number of boids within distance
 	let t = 0;
 	//calculates center of mass
 	let result = new Coord(0,0);
@@ -159,6 +154,7 @@ Boid.prototype.cohesion = function(){
 			t++;
 		}
 	}
+	//divides based on the number of boids nearby
 	result.x /= t;
 	result.y /= t;
 
@@ -170,9 +166,7 @@ Boid.prototype.cohesion = function(){
 	return result;
 }
 
-
 Boid.prototype.separation = function(){
-	//0 - 50 | start 15
 	let result = new Coord(0,0);
 	for(let i = 0; i < n; i++){
 		if(array[i].x == this.x && array[i].y == this.y && array[i].r == this.r){
@@ -189,7 +183,6 @@ Boid.prototype.separation = function(){
 
 	return result;
 }
-
 
 Boid.prototype.alignment = function(){
 	//change how quickly they align
@@ -215,6 +208,7 @@ Boid.prototype.alignment = function(){
 
 Boid.prototype.drawImageRot = function(){
     // Store the current context state (i.e. rotation, translation etc..)
+	ctx.fillStyle = 'gray';
     ctx.save();
 	
     //Set the origin to the center of the image
@@ -265,6 +259,8 @@ function makeBoids(n){
 
 function animationFrame(){
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	ctx.fillStyle = "LightSkyBlue";
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
 	for(let i = 0; i < n; i++){
 		array[i].move();
 	}
@@ -318,18 +314,14 @@ function buttonClick(){
 	else{
 		boundaryCase = 0;
 	}
+	//
 	var elem = document.getElementById("myButton");
-
-
-
 	if(elem.innerHTML =="Wrap Around: On"){
 		elem.innerHTML = "Wrap Around: Off";
 	}
 	else if(elem.innerHTML =="Wrap Around: Off"){
 		elem.innerHTML = "Wrap Around: On";
 	}
-
-
 }
 
 //----------SLIDER FUNCTIONS----------//
