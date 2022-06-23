@@ -2,17 +2,15 @@
 	//on click boids travel towards the cursor
 
 //Gets the canvas
-var canvas = document.getElementById("myCanvas");
+const canvas = document.getElementById("myCanvas");
 //instances 2d on it
-var ctx = canvas.getContext("2d");
+const ctx = canvas.getContext("2d");
 
-
-//set width
-function setCanvasSize() {
-	canvas.width = window.innerWidth * 6 / 7;
-	canvas.height = window.innerHeight * 4 / 5;
-}
-window.addEventListener('resize', setCanvasSize());
+//set canvas size
+window.addEventListener('resize', () => {
+	canvas.width = parent.innerWidth * 2 / 3;
+	canvas.height = canvas.width / 2;
+});
 
 //Sets some base values for drawing
 ctx.lineWidth = 4;
@@ -30,6 +28,7 @@ let alnPerc = 100;
 let boundaryCase = 0;
 
 //number of boids prompting
+//TODO - TURN THIS INTO A FORM OR SOMETHING
 let n = prompt("Enter number of Boids", "");
 while(isNaN(parseInt(n))){
 	n = prompt("Enter number of Boids", "");
@@ -46,16 +45,19 @@ function Coord(x, y){
 	this.y = y;
 }
 
+Coord.prototype.add(coord){
+	this.x += coord.x;
+	this.y += coord.y;
+}
+
 //----------BOID OBJECT----------//
 function Boid(x, y, r, dx, dy){
 	//position
-	this.x = x;
-	this.y = y;
+	this.pos = new Coord(x,y);
 	//rotation (radians)
 	this.r = r;
 	//velocity
-	this.dx = dx;
-	this.dy = dy;
+	this.vel = new Coord(dx, dy);
 }
 
 //----------BOID FUNCTIONS----------//
@@ -66,24 +68,20 @@ Boid.prototype.move = function(){
 	
 	//gets cohesion calculation and adds it to result;
 	temp = this.cohesion();
-	result.x += temp.x;
-	result.y += temp.y;
+	result.add(temp);
 
 	//gets separation calculation and adds it to result;
 	temp = this.separation();
-	result.x += temp.x;
-	result.y += temp.y;
+	result.add(temp);
 
 	//gets alignment calculation and adds it to result
 	temp = this.alignment();
-	result.x += temp.x;
-	result.y += temp.y;
+	result.add(temp);
 	
 	//console.log(result.x + ", " + result.y);
 
 	//adds to current velocity
-	this.dx += result.x;
-	this.dy += result.y;
+	this.vel.add(result);
 
 	this.speedlimit();
 
@@ -91,8 +89,7 @@ Boid.prototype.move = function(){
 	this.r = (dotProduct(this.dx, this.dy, 1, 0) * (Math.PI / 180)) + (Math.PI);
 	
 	//update position based on velocity
-	this.x += this.dx;
-	this.y += this.dy;
+	this.pos.add(this.vel);
 
 	//boundary checking
 		//first case is to allow boids to loop around boundaries. Ex: Go off left side and appear on right side
@@ -100,37 +97,37 @@ Boid.prototype.move = function(){
 	switch(boundaryCase){
 		//Case 0
 		case 0:
-			if(this.x > canvas.width + 32){
-				this.x = 0;
+			if(this.pos.x > canvas.width + 32){
+				this.pos.x = 0;
 			}
-			if(this.x < -32){
-				this.x = canvas.width;
+			if(this.pos.x < -32){
+				this.pos.x = canvas.width;
 			}
 	
-			if(this.y > canvas.height + 32){
-				this.y = 0;
+			if(this.pos.y > canvas.height + 32){
+				this.pos.y = 0;
 			}
-			if(this.y < -32){
-				this.y = canvas.height;
+			if(this.pos.y < -32){
+				this.pos.y = canvas.height;
 			}
 			break;
 		//Case 1
 		case 1:
-			if(this.x > canvas.width){
+			if(this.pos.x > canvas.width){
 				this.dx *= -1;
-				this.x = canvas.width;
+				this.pos.x = canvas.width;
 			}
-			else if(this.x < 0){
+			else if(this.pos.x < 0){
 				this.dx *= -1;
-				this.x = 0;
+				this.pos.x = 0;
 			}
-			if(this.y > canvas.height){
+			if(this.pos.y > canvas.height){
 				this.dy *= -1;
-				this.y = canvas.height;
+				this.pos.y = canvas.height;
 			}
-			else if(this.y < 0){
+			else if(this.pos.y < 0){
 				this.dy *= -1;
-				this.y = 0;
+				this.pos.y = 0;
 			}
 			break;
 		default:
@@ -149,8 +146,7 @@ Boid.prototype.cohesion = function(){
 	let result = new Coord(0,0);
 	for(let i = 0; i < n; i++){
 		if(this.dist(array[i]) < cohDist){
-			result.x += array[i].x;
-			result.y += array[i].y;
+			result.add(array[i].pos);
 			t++;
 		}
 	}
@@ -285,7 +281,6 @@ function dotProduct(x, y, dx, dy){
 }
 
 function step() {
-	setCanvasSize();
     animationFrame();
 	setTimeout(100);
     window.requestAnimationFrame(step);
