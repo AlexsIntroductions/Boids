@@ -1,27 +1,115 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
 	<link rel="stylesheet" href="stylesheet.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+    <title>Document</title>
 </head>
-	<body>
-		<div class="title">ARTIFICIAL LIFE SIMULATION: BOIDS</div>
-		<canvas id="myCanvas" width="1000" height="500"></canvas>
-		<script src="script.js"></script>
-		<div id="control-container">
-			<button type="button" id="myButton" onclick="buttonClick()">Wrap Around: On</button>
-			<div style="display: flex; flex-direction: column; width: 100%;">
-				<div class="slider-container">
-					<div class="slider-label">Separation Distance:</div><input type="range" min="1" max="100" value="50" class="slider" onchange="separationDistance(this.value);">
-					<div class="slider-label">Cohesion Distance:</div><input type="range" min="1" max="200" value="100" class="slider" onchange="cohesionDistance(this.value);">
-					<div class="slider-label">Velocity Limit:</div><input type="range" min="1" max="100" value="20" class="slider" onchange="velocitySlider(this.value);">
+<body style="margin: 2%;">
+    <div class="container-fluid">
+        <span class="container-fluid display-4 center">A Look Into Artificial Life: Boids</span>
+        <hr style="border-top: 3px solid lightgray">
+        <div class="bg-light">
+        <span class="lead" style="font-size: 25px;">Boids</span>, bird-oid object, are a term and program coined by Craig W. Reynolds. The Boids program was created to simulate a flocking behavior, similar to birds,
+        as a form of artificial life. 
+
+        Boids exhibit a simple ai influenced through three main factors: separation, alignment, and cohesion; the three of which influence the direction and velocity of each boid, 
+        all determined through the state of the boids in its local neighborhood. Each 'rule' will alter the velocity and direction of the boids for the next frame of animation.
+        </div>
+    </div>
+
+    <div class="container-fluid"><hr style="border-top: 3px solid lightgray"></div>
+
+
+    <div class="image-background canvas-container">
+	        <canvas id="myCanvas" width="1000" height="500"></canvas>
+
+
+            <div class="container-fluid control-container row p-3">
+
+                <div class="container-fluid col">
+                    <span class="container-fluid center m-0 p-0">Controls</span>
+                    <div class="container-fluid m-0 p-0"><hr style="border-top: 3px solid lightgray"></div>
+                    <small class="text-muted text-left">Enter the number of boids you would like to generate in the text box below. 
+                        After entering your number, press the start button to begin the simulation. The sliders on the right control
+                        various aspects leading to the boids behavior; to understand what each one does, hover over the slider and a tooltip will pop-up
+                        giving an explanation as to what the slider changes. If you want to start over with a different number of boids, press the reset button and begin again.
+                    </small>
+                </div>
+                <div class="container-fluid m-0 p-0"><hr style="border-top: 3px solid lightgray"></div>
+                
+                <div class="container col">
+                    <div class="container">
+                        <input type="number" class="form-control" name="boidsForm" placeholder="Enter A Number">
+                        <small class="form-text text-muted text-left">Enter The Number of Boids to Generate</small>
+                    </div>
+                    <div class="container m-3">
+                        <button type="button" class="myButton">Start</button>
+                        <button type="button" class="myButton">Reset</button>
+                    </div>
+                </div>
+
+				<div class="container-fluid col">
+					<div class="slider-label">Separation Distance:</div>
+                    <div>
+                        <input type="range" name="s1" min="1" max="100" value="50" class="slider" >
+                        <span class="container" name="s1-val">50</span>
+                    </div>
+
+					<div class="slider-label">Cohesion Distance:</div>
+                    <div>
+                        <input type="range" name="s2" min="1" max="200" value="100" class="slider">
+                        <span class="container" name="s2-val">100</span>
+                    </div>
+
+					<div class="slider-label">Velocity Limit:</div>
+                    <div>
+                        <input type="range" name="s3" min="1" max="100" value="20" class="slider">
+                        <span class="container" name="s3-val">20</span>
+                    </div>
 				</div>
-				<div class="slider-container">
-					<div class="slider-label">Separation Percent:</div><input type="range" min="1" max="1000" value="200" class="slider" onchange="separationPercent(this.value);">
-					<div class="slider-label">Cohesion Percent:</div><input type="range" min="1" max="1000" value="600" class="slider" onchange="cohesionPercent(this.value);">
-					<div class="slider-label">Alignment Percent:</div><input type="range" min="1" max="1000" value="100" class="slider" onchange="alignmentPercent(this.value);">
+				<div class="container-fluid col">
+					<div class="slider-label">Separation Percent:</div>
+                    <div>
+                        <input type="range" name="s4" min="1" max="1000" value="200" class="slider">
+                        <span class="container" name="s4-val">200</span>
+                    </div>
+
+					<div class="slider-label">Cohesion Percent:</div>
+                    <div>
+                        <input type="range" name="s5" min="1" max="1000" value="600" class="slider">
+                        <span class="container" name="s5-val">600</span>
+                    </div>
+
+					<div class="slider-label">Alignment Percent:</div>
+                    <div>
+                        <input type="range" name="s6" min="1" max="1000" value="100" class="slider">
+                        <span class="container" name="s6-val">100</span>
+                    </div>
+
 				</div>
-			</div>
-		</div>
-	</body>
-	<script src="script.js"></script>
+
+            </div>
+
+    </div>
+    
+
+    <div class="container-fluid"><hr style="border-top: 3px solid lightgray"></div>
+
+    <div class="container">
+        <span class="display-4">Bibliography</span>
+        <dl class="pl-5"><!-- Use a Bootstrap list for this-->
+            <dd>-https://en.wikipedia.org/wiki/Boids</dd>
+            <dd>-https://en.wikipedia.org/wiki/Artificial_life</dd>
+            <dd>-https://cs.stanford.edu/people/eroberts/courses/soco/projects/2008-09/modeling-natural-systems/boids.html</dd>
+        </dl>
+    </div>
+    <script src="script.js"></script>
+</body>
 </html>

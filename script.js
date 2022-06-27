@@ -1,5 +1,7 @@
 //TODO
 	//on click boids travel towards the cursor
+	//make background behing the actual canvas an image of the current frame, basically a second 'canavs' but its just pictures that are constantly changing??? 
+		//have it faded out in the back so that it doesnt distract too much from the main canvas. just for goofs and laughs
 
 //Gets the canvas
 const canvas = document.getElementById("myCanvas");
@@ -29,12 +31,7 @@ let boundaryCase = 0;
 
 //number of boids prompting
 //TODO - TURN THIS INTO A FORM OR SOMETHING
-let n = prompt("Enter number of Boids", "");
-while(isNaN(parseInt(n))){
-	n = prompt("Enter number of Boids", "");
-}
-
-n = Math.floor(n);
+n = 50;
 
 //initialize boid array
 const array = new Array(n);
@@ -45,7 +42,8 @@ function Coord(x, y){
 	this.y = y;
 }
 
-Coord.prototype.add(coord){
+//----------COORD FUNCTIONS----------//
+Coord.prototype.add = function(coord){
 	this.x += coord.x;
 	this.y += coord.y;
 }
@@ -53,11 +51,13 @@ Coord.prototype.add(coord){
 //----------BOID OBJECT----------//
 function Boid(x, y, r, dx, dy){
 	//position
-	this.pos = new Coord(x,y);
+	this.x = x;
+	this.y = y;
 	//rotation (radians)
 	this.r = r;
 	//velocity
-	this.vel = new Coord(dx, dy);
+	this.dx = dx;
+	this.dy = dy;
 }
 
 //----------BOID FUNCTIONS----------//
@@ -81,7 +81,8 @@ Boid.prototype.move = function(){
 	//console.log(result.x + ", " + result.y);
 
 	//adds to current velocity
-	this.vel.add(result);
+	this.dx += result.x;
+	this.dy += result.y;
 
 	this.speedlimit();
 
@@ -89,7 +90,8 @@ Boid.prototype.move = function(){
 	this.r = (dotProduct(this.dx, this.dy, 1, 0) * (Math.PI / 180)) + (Math.PI);
 	
 	//update position based on velocity
-	this.pos.add(this.vel);
+	this.x += this.dx;
+	this.y += this.dy;
 
 	//boundary checking
 		//first case is to allow boids to loop around boundaries. Ex: Go off left side and appear on right side
@@ -97,37 +99,37 @@ Boid.prototype.move = function(){
 	switch(boundaryCase){
 		//Case 0
 		case 0:
-			if(this.pos.x > canvas.width + 32){
-				this.pos.x = 0;
+			if(this.x > canvas.width + 32){
+				this.x = 0;
 			}
-			if(this.pos.x < -32){
-				this.pos.x = canvas.width;
+			if(this.x < -32){
+				this.x = canvas.width;
 			}
 	
-			if(this.pos.y > canvas.height + 32){
-				this.pos.y = 0;
+			if(this.y > canvas.height + 32){
+				this.y = 0;
 			}
-			if(this.pos.y < -32){
-				this.pos.y = canvas.height;
+			if(this.y < -32){
+				this.y = canvas.height;
 			}
 			break;
 		//Case 1
 		case 1:
-			if(this.pos.x > canvas.width){
+			if(this.x > canvas.width){
 				this.dx *= -1;
-				this.pos.x = canvas.width;
+				this.x = canvas.width;
 			}
-			else if(this.pos.x < 0){
+			else if(this.x < 0){
 				this.dx *= -1;
-				this.pos.x = 0;
+				this.x = 0;
 			}
-			if(this.pos.y > canvas.height){
+			if(this.y > canvas.height){
 				this.dy *= -1;
-				this.pos.y = canvas.height;
+				this.y = canvas.height;
 			}
-			else if(this.pos.y < 0){
+			else if(this.y < 0){
 				this.dy *= -1;
-				this.pos.y = 0;
+				this.y = 0;
 			}
 			break;
 		default:
@@ -140,17 +142,17 @@ Boid.prototype.move = function(){
 }
 
 Boid.prototype.cohesion = function(){
-	//number of boids within distance
+	//0 - 600 | start 100
 	let t = 0;
 	//calculates center of mass
 	let result = new Coord(0,0);
 	for(let i = 0; i < n; i++){
 		if(this.dist(array[i]) < cohDist){
-			result.add(array[i].pos);
+			result.x += array[i].x;
+			result.y += array[i].y;
 			t++;
 		}
 	}
-	//divides based on the number of boids nearby
 	result.x /= t;
 	result.y /= t;
 
@@ -286,7 +288,7 @@ function step() {
     window.requestAnimationFrame(step);
 }
 
-//----------ELEMENT FUNCTIONS----------//
+//----------BUTTON FUNCTIONS----------//
 function buttonClick(){
 	if(boundaryCase == 0){
 		boundaryCase = 1;
@@ -320,37 +322,37 @@ function buttonClick(){
 }
 
 //----------SLIDER FUNCTIONS----------//
-function velocitySlider(num){
-	console.log("Velocity: " + num);
-	velocity = parseInt(num);
-}
 
-function separationDistance(num){
-	console.log("Sep Dist: " + num);
-	sepDist = parseInt(num);
-}
+$('[name="s1"]').on('input', function(){
+	sepDist = parseInt(this.value);
+	$('[name="s1-val"]').html(this.value);
+});
 
-function separationPercent(num){
-	console.log("Sep Percent: " + num);
-	sepPerc = parseInt(num);
-}
+$('[name="s2"]').on('input', function(){
+	sepPerc = parseInt(this.value);
+	$('[name="s2-val"]').html(this.value);
+});
 
-function cohesionDistance(num){
-	console.log("Coh Dist: " + num);
-	cohDist = parseInt(num);
-}
+$('[name="s3"]').on('input', function(){
+	velocity = parseInt(this.value);
+	$('[name="s3-val"]').html(this.value);
+});
 
-function cohesionPercent(num){
-	console.log("Coh Percent: " + num);
-	cohPerc = parseInt(num);
-}
+$('[name="s4"]').on('input', function(){
+	sepPerc = parseInt(this.value);
+	$('[name="s4-val"]').html(this.value);
+});
 
-function alignmentPercent(num){
-	console.log("Alignment Percent: " + num);
-	alnPerc = parseInt(num);
-}
+$('[name="s5"]').on('input', function(){
+	cohPerc = parseInt(this.value);
+	$('[name="s5-val"]').html(this.value);
+});
 
+$('[name="s6"]').on('input', function(){
+	alnPerc = parseInt(this.value);
+	$('[name="s6-val"]').html(this.value);
+});
 //----------MAIN PROGRAM START----------//
 makeBoids(n);
-getPositions();
+//getPositions();
 window.requestAnimationFrame(step);
