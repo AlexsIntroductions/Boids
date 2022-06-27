@@ -31,31 +31,32 @@
 	        <canvas id="myCanvas" width="1000" height="500"></canvas>
 
 
-            <div class="container-fluid control-container row p-3">
-
+            <div class="container-fluid control-container row p-3 ml-0 mr-0">
                 <div class="container-fluid col">
                     <span class="container-fluid center m-0 p-0">Controls</span>
                     <div class="container-fluid m-0 p-0"><hr style="border-top: 3px solid lightgray"></div>
-                    <small class="text-muted text-left">Enter the number of boids you would like to generate in the text box below. 
-                        After entering your number, press the start button to begin the simulation. The sliders on the right control
-                        various aspects leading to the boids behavior; to understand what each one does, hover over the slider and a tooltip will pop-up
-                        giving an explanation as to what the slider changes. If you want to start over with a different number of boids, press the reset button and begin again.
+                    <small class="text-muted text-left"><span class="lead" style="font-size: 20px;">TO BEGIN,</span> enter the number of boids you would like to generate in the text box. After entering your number, press the start button to begin the simulation.
+                        The sliders on the right control various aspects that affect the boids behavior. Hovering over the sliders will allow you to
+                        see an explanation of how the slider changes the boids behavior. Pressing the "Wrap Around" button will make the boids wrap to the opposite side after passing the edge or bounce off the 
+                        sides of the canvas depending on if it is ON or OFF respectively. If you want to start over with a different number of boids, enter a new number and press reset.
                     </small>
                 </div>
                 <div class="container-fluid m-0 p-0"><hr style="border-top: 3px solid lightgray"></div>
                 
                 <div class="container col">
                     <div class="container">
-                        <input type="number" class="form-control" name="boidsForm" placeholder="Enter A Number">
-                        <small class="form-text text-muted text-left">Enter The Number of Boids to Generate</small>
-                    </div>
-                    <div class="container m-3">
-                        <button type="button" class="myButton">Start</button>
-                        <button type="button" class="myButton">Reset</button>
+                        <form name="numForm" action="">
+                            <small class="form-text text-muted text-left">Enter The Number of Boids to Generate</small>
+                            <input type="number" class="form-control" name="boidNum" placeholder="Enter A Number">
+                            <div class="container-fluid row center">
+                                <input type="submit" name="submitButton" value="Start" class="myButton">
+                                <button type="button" name="wrap" class="myButton">Wrap Around: On</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
 
-				<div class="container-fluid col">
+				<div class="container-fluid col col-center mb-3">
 					<div class="slider-label">Separation Distance:</div>
                     <div>
                         <input type="range" name="s1" min="1" max="100" value="50" class="slider" >
@@ -74,7 +75,7 @@
                         <span class="container" name="s3-val">20</span>
                     </div>
 				</div>
-				<div class="container-fluid col">
+				<div class="container-fluid col col-center mb-3">
 					<div class="slider-label">Separation Percent:</div>
                     <div>
                         <input type="range" name="s4" min="1" max="1000" value="200" class="slider">

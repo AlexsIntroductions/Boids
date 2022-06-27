@@ -9,7 +9,8 @@
 }
 
 .myButton{
-    margin: 5%;
+    appearance: none;
+    margin: 1em;
     padding: 2%;
 }
 
@@ -17,7 +18,12 @@
     display: flex;
     justify-content: center;
     text-align: center;
-    
+}
+
+.col-center{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .canvas-container{

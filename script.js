@@ -15,8 +15,13 @@ window.addEventListener('resize', () => {
 });
 
 //Sets some base values for drawing
-ctx.lineWidth = 4;
+ctx.lineWidth = 3;
 ctx.strokeStyle = 'black';
+ctx.fillStyle = "LightSkyBlue";
+ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+//variable to track animation frame requests
+var req;
 
 //Base Values for Sliders and Boids
 let velocity = 10;
@@ -31,10 +36,10 @@ let boundaryCase = 0;
 
 //number of boids prompting
 //TODO - TURN THIS INTO A FORM OR SOMETHING
-n = 50;
+let n = 50;
 
 //initialize boid array
-const array = new Array(n);
+let array = new Array(n);
 
 //----------COORD OBJECT----------//
 function Coord(x, y){
@@ -218,8 +223,8 @@ Boid.prototype.drawImageRot = function(){
     //draw the image
 	ctx.beginPath();
 	ctx.moveTo(0, 0);
-	ctx.lineTo(16, 8);
-	ctx.lineTo(16, -8);
+	ctx.lineTo(12, 6);
+	ctx.lineTo(12, -6);
 	
 	ctx.closePath();
 	ctx.stroke();
@@ -230,12 +235,16 @@ Boid.prototype.drawImageRot = function(){
 }
 	
 Boid.prototype.dist = function(boid){
+	//distance formula between two points (google it)
 	return Math.sqrt(Math.pow((boid.x - this.x),2) + Math.pow((boid.y - this.y),2));
 }
 
 Boid.prototype.speedlimit = function(){
+	//get the magnitude of the current boid (the velocity vector from two points)
 	let curSpeed = magnitude(this.dx, this.dy);
+	//if it is greater than the speed limit
 	if(curSpeed > velocity){
+		//
 		this.dx = (this.dx / curSpeed) * velocity;
 		this.dy = (this.dy / curSpeed) * velocity;
 	}
@@ -285,11 +294,24 @@ function dotProduct(x, y, dx, dy){
 function step() {
     animationFrame();
 	setTimeout(100);
-    window.requestAnimationFrame(step);
+    req = window.requestAnimationFrame(step);
+}
+
+function buttonEvaluate(num){
+	if(isNaN(num)){
+		alert("ENTER A NUMBER");
+	}
+	else{
+		n = num;
+		window.cancelAnimationFrame(req);
+		array = new Array(n);
+		makeBoids(n);
+		req = window.requestAnimationFrame(step);
+	}
 }
 
 //----------BUTTON FUNCTIONS----------//
-function buttonClick(){
+$('[name="wrap"]').click(function(){
 	if(boundaryCase == 0){
 		boundaryCase = 1;
 		for(let i = 0; i < n; i++){
@@ -311,18 +333,28 @@ function buttonClick(){
 	else{
 		boundaryCase = 0;
 	}
-	//
-	var elem = document.getElementById("myButton");
-	if(elem.innerHTML =="Wrap Around: On"){
-		elem.innerHTML = "Wrap Around: Off";
+	var elem = $('[name="wrap"]');
+	if(elem.html() =="Wrap Around: On"){
+		elem.html("Wrap Around: Off");
 	}
-	else if(elem.innerHTML =="Wrap Around: Off"){
-		elem.innerHTML = "Wrap Around: On";
+	else if(elem.html() =="Wrap Around: Off"){
+		elem.html("Wrap Around: On");
 	}
-}
+});
+
+$(document).ready(function(){
+	$('[name="submitButton"]').click(function(){
+		$('[name="numForm"]').submit(function(e){
+			e.preventDefault();
+			var tempNum = $('[name="boidNum"]').val();
+			buttonEvaluate(tempNum);
+			$('[name="submitButton"]').val("Reset");
+			return false;
+		});
+	});
+});
 
 //----------SLIDER FUNCTIONS----------//
-
 $('[name="s1"]').on('input', function(){
 	sepDist = parseInt(this.value);
 	$('[name="s1-val"]').html(this.value);
@@ -352,7 +384,3 @@ $('[name="s6"]').on('input', function(){
 	alnPerc = parseInt(this.value);
 	$('[name="s6-val"]').html(this.value);
 });
-//----------MAIN PROGRAM START----------//
-makeBoids(n);
-//getPositions();
-window.requestAnimationFrame(step);
