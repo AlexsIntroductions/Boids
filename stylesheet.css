@@ -8,9 +8,24 @@
 	background-color: white;
 }
 
-.myButton{
-    appearance: none;
-    margin: 1em;
+#tooltip{
+    overflow: auto;
+    color: white;
+    background-color: black;
+    display: none;
+}
+
+#tooltip[data-popper-placement^='top'] > #arrow {
+    bottom: -4px;
+}
+  
+#tooltip[data-show] {
+    display: block;
+}
+
+.button-margin{
+    margin: 6%;
+    margin-top: 8%;
     padding: 2%;
 }
 

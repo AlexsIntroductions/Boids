@@ -36,10 +36,10 @@ let boundaryCase = 0;
 
 //number of boids prompting
 //TODO - TURN THIS INTO A FORM OR SOMETHING
-let n = 50;
+let n = -1;
 
 //initialize boid array
-let array = new Array(n);
+let array;
 
 //----------COORD OBJECT----------//
 function Coord(x, y){
@@ -298,8 +298,8 @@ function step() {
 }
 
 function buttonEvaluate(num){
-	if(isNaN(num)){
-		alert("ENTER A NUMBER");
+	if(num <= 0){
+		return -1;
 	}
 	else{
 		n = num;
@@ -335,9 +335,13 @@ $('[name="wrap"]').click(function(){
 	}
 	var elem = $('[name="wrap"]');
 	if(elem.html() =="Wrap Around: On"){
+		elem.addClass("btn-outline-danger");
+		elem.removeClass("btn-outline-success");
 		elem.html("Wrap Around: Off");
 	}
 	else if(elem.html() =="Wrap Around: Off"){
+		elem.addClass("btn-outline-success");
+		elem.removeClass("btn-outline-danger");
 		elem.html("Wrap Around: On");
 	}
 });
@@ -347,8 +351,9 @@ $(document).ready(function(){
 		$('[name="numForm"]').submit(function(e){
 			e.preventDefault();
 			var tempNum = $('[name="boidNum"]').val();
-			buttonEvaluate(tempNum);
-			$('[name="submitButton"]').val("Reset");
+			if(buttonEvaluate(tempNum) != -1){
+				$('[name="submitButton"]').val("Reset");
+			}
 			return false;
 		});
 	});
@@ -383,4 +388,15 @@ $('[name="s5"]').on('input', function(){
 $('[name="s6"]').on('input', function(){
 	alnPerc = parseInt(this.value);
 	$('[name="s6-val"]').html(this.value);
+});
+
+const popperInstance = Popper.createPopper($('[name="submitButton"]'), $('#tooltip'));
+
+$('[name="submitButton"]').mouseover(function(){
+	$('#tooltip').attr('data-show', '');
+	popperInstance.update();
+});
+
+$('[name="submitButton"]').mouseleave(function(){
+	$('#tooltip').removeAttr('data-show');
 });

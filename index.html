@@ -26,12 +26,12 @@
 
     <div class="container-fluid"><hr style="border-top: 3px solid lightgray"></div>
 
-
     <div class="image-background canvas-container">
 	        <canvas id="myCanvas" width="1000" height="500"></canvas>
 
 
             <div class="container-fluid control-container row p-3 ml-0 mr-0">
+                
                 <div class="container-fluid col">
                     <span class="container-fluid center m-0 p-0">Controls</span>
                     <div class="container-fluid m-0 p-0"><hr style="border-top: 3px solid lightgray"></div>
@@ -41,6 +41,7 @@
                         sides of the canvas depending on if it is ON or OFF respectively. If you want to start over with a different number of boids, enter a new number and press reset.
                     </small>
                 </div>
+
                 <div class="container-fluid m-0 p-0"><hr style="border-top: 3px solid lightgray"></div>
                 
                 <div class="container col">
@@ -49,8 +50,14 @@
                             <small class="form-text text-muted text-left">Enter The Number of Boids to Generate</small>
                             <input type="number" class="form-control" name="boidNum" placeholder="Enter A Number">
                             <div class="container-fluid row center">
-                                <input type="submit" name="submitButton" value="Start" class="myButton">
-                                <button type="button" name="wrap" class="myButton">Wrap Around: On</button>
+                                <button type="submit" name="submitButton" class="btn btn-outline-secondary button-margin">Start</button>
+                                <button type="button" name="wrap" class="btn btn-outline-success button-margin">Wrap Around: On</button>
+
+                                <div id="tooltip">
+                                    Please Enter a Number Above Zero
+                                    <div id="arrow" data-popper-arrow></div>
+                                </div>
+
                             </div>
                         </form>
                     </div>
@@ -97,7 +104,6 @@
 				</div>
 
             </div>
-
     </div>
     
 
